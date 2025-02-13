@@ -16,6 +16,8 @@
     "tailwindcss": "^3.4.1"
   },
   "dependencies": {
+    "electron-reloader": "^1.2.3",
+    "exceljs": "^4.4.0",
     "puppeteer": "^21.5.2"
   }
 }
