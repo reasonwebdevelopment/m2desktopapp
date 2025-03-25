@@ -1,168 +1,138 @@
-const btn = document.getElementById('btn');
-// const propertynl = document.getElementById('propertynl'); // Gebruik dit indien nodig
-const loader = document.getElementById('loader');
-const statustext = document.getElementById('statustext');
-const results = document.getElementById('results');
-// information.innerText = `This app is using Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), and Electron (v${versions.electron()})`;
+// Wrap everything inside DOMContentLoaded to ensure the elements exist
+document.addEventListener('DOMContentLoaded', () => {
+    // Grab the DOM elements
+    const btnVastgoedmarkt = document.getElementById('btn');           // Button for Vastgoedmarkt
+    const btnPropertynl = document.getElementById('propertynl');      // Button for PropertyNL
+    const loader = document.getElementById('loader');
+    const statustext = document.getElementById('statustext');
+    const results = document.getElementById('results');
+    const filesTable = document.getElementById('filesTable');
 
-btn.addEventListener('click', () => {
-    loader.classList.remove('hidden');
-    func();
-});
-
-propertynl.addEventListener('click', () => {
-    loader.classList.remove('hidden');
-});
-
-window.electronAPI.onUpdateStatus((value) => {
-    statustext.innerText = value;
-    window.electronAPI.statusValue(value);
-});
-
-window.electronAPI.onResults((value) => {
-    results.innerText = value;
-    window.electronAPI.resultValue(value);
-});
-
-window.electronAPI.onGetDataComplete((value) => {
-    if (value === true) {
-        loader.classList.add('hidden');
-    }
-});
-
-const func = async () => {
-    const response = await window.versions.checkVastgoedmarkt();
-    // Hier kun je eventueel extra logica toevoegen op basis van de response
-};
-
-const fs = window.electronFs;
-const path = window.electronPath;
-
-let currentDir = './scrapeData/';
-let filesTable = document.getElementById('filesTable');
-
-////////////////////////////////////////////////////
-// Event Listeners voor directory navigatie
-
-filesTable.addEventListener('dblclick', e => {
-    let dirName = e.target.parentNode.getAttribute('dirName');
-    if (dirName && dirName !== '') {
-        scanDir(path.join(currentDir, dirName));
-    }
-});
-
-document.addEventListener('keydown', e => {
-    e.stopPropagation();
-    if (e.key === 'Backspace') {
-        scanDir(path.join(currentDir, '..'));
-    }
-});
-
-////////////////////////////////////////////////////
-// Start de directory scan (optioneel, haal de commentaar weg als je dit wilt activeren)
-// scanDir(currentDir);
-
-////////////////////////////////////////////////////
-// Functie om een directory te scannen en de bestanden te tonen
-
-function scanDir(dir) {
-    currentDir = dir;
-
-    // Lees alle bestanden in de directory
-    let files = fs.readdirSync(dir);
-
-    // Verzamel details per bestand of map
-    let filesStat = [];
-    for (let i = 0; i < files.length; i++) {
+    // A generic function to run a scraper based on its name.
+    async function runScraper(scraperName) {
+        // Show the loader
+        loader.classList.remove('hidden');
+        let response;
         try {
-            let name = files[i];
-            let fullPath = path.join(dir, name);
-            let stat = fs.statSync(fullPath);
-            // Gebruik stat.isDirectory() in plaats van fs.isDirectory()
-            let isDir = stat.isDirectory() ? 1 : 0;
-            let mtime = fileDate(stat.mtime);
-            let size = '';
-            if (!isDir) size = bytesToSize(stat.size);
-            // Sla alleen bestanden/mappen op die niet met een punt beginnen (verborgen)
-            if (name.indexOf('.') !== 0) {
-                filesStat.push({
-                    name,
-                    stat,
-                    isDir,
-                    mtime,
-                    size
-                });
+            if (scraperName === 'vastgoedmarkt') {
+                console.log("Renderer: Invoking Vastgoedmarkt scraper");
+                response = await window.versions.checkVastgoedmarkt();
+            } else if (scraperName === 'propertynl') {
+                console.log("Renderer: Invoking PropertyNL scraper");
+                response = await window.versions.checkPropertyNL();
+            } else {
+                console.error("Renderer: Unknown scraper name:", scraperName);
+                response = "Unknown scraper";
             }
+            console.log("Renderer: Scraper response:", response);
         } catch (error) {
-            // Fout bij het ophalen van bestand info, sla over
+            console.error("Renderer: Error running scraper", error);
+        } finally {
+            // Hide the loader when done
+            loader.classList.add('hidden');
         }
     }
 
-    // Sorteer eerst op naam, vervolgens op type (directories eerst)
-    filesStat.sort((a, b) => {
-        let res = 0;
-        if (b.name.toLowerCase() > a.name.toLowerCase()) res = -1;
-        if (b.name.toLowerCase() < a.name.toLowerCase()) res = 1;
-        return res;
-    });
-    filesStat.sort((a, b) => {
-        return b.isDir - a.isDir;
-    });
-
-    // Bouw de HTML-tabel voor de bestanden/mappen
-    let list = '<table class="w-full">';
-    list += `
-    <thead>
-        <tr>
-            <th class="text-left">Name</th>
-            <th class="text-left">Date modified</th>
-            <th class="text-left">Size</th>
-        </tr>
-    </thead>
-    `;
-
-    for (let i = 0; i < filesStat.length; i++) {
-        let f = filesStat[i];
-        list += `
-        <tr dirName="${f.isDir ? f.name : ''}" draggable="true">
-            <td>
-                ${f.isDir ? '&#128193;' : '&#128452;'} ${f.name}
-            </td>
-            <td>
-                ${f.mtime}
-            </td>
-            <td class="size">
-                ${f.size}
-            </td>
-        </tr>
-        `;
+    // Attach event listener for Vastgoedmarkt button
+    if (btnVastgoedmarkt) {
+        btnVastgoedmarkt.addEventListener('click', () => {
+            runScraper('vastgoedmarkt');
+        });
     }
 
-    list += '</table>';
+    // Attach event listener for PropertyNL button, if it exists
+    if (btnPropertynl) {
+        btnPropertynl.addEventListener('click', () => {
+            runScraper('propertynl');
+        });
+    }
 
-    // Plaats de tabel in het DOM
-    filesTable.innerHTML = list;
-}
+    // Set up your IPC listeners for status updates and results
+    window.electronAPI.onUpdateStatus((value) => {
+        statustext.innerText = value;
+        window.electronAPI.statusValue(value);
+    });
 
-///////// Helper functies
+    window.electronAPI.onResults((value) => {
+        results.innerText = value;
+        window.electronAPI.resultValue(value);
+    });
 
-function bytesToSize(bytes, seperator = " ") {
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) return '0 B';
-    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
-    if (i === 0) return `${bytes}${seperator}${sizes[i]}`;
-    return `${(bytes / (1024 ** i)).toFixed(1)}${seperator}${sizes[i]}`;
-}
+    window.electronAPI.onGetDataComplete((value) => {
+        if (value === true) {
+            loader.classList.add('hidden');
+        }
+    });
 
-function fileDate(ms) {
-    // Let op: ms.getMonth() geeft 0-11, dus indien gewenst +1 toevoegen
-    let res = ms.getFullYear() +
-        '-' + leadZeroDate(ms.getMonth() + 1) +
-        '-' + leadZeroDate(ms.getDate()) +
-        ', ' + ms.toLocaleTimeString();
-    return res;
-}
+    // Directory scanning functionality
+    let currentDir = './scrapeData/';
 
-function leadZeroDate(num) {
-    return num < 10 ? `0${num}` : num;
-}
+    filesTable.addEventListener('dblclick', e => {
+        let dirName = e.target.parentNode.getAttribute('dirName');
+        if (dirName && dirName !== '') {
+            scanDir(window.electronPath.join(currentDir, dirName));
+        }
+    });
+
+    document.addEventListener('keydown', e => {
+        e.stopPropagation();
+        if (e.key === 'Backspace') {
+            scanDir(window.electronPath.join(currentDir, '..'));
+        }
+    });
+
+    function scanDir(dir) {
+        currentDir = dir;
+        let files = window.electronFs.readdirSync(dir);
+        let filesStat = [];
+        for (let i = 0; i < files.length; i++) {
+            try {
+                let name = files[i];
+                let fullPath = window.electronPath.join(dir, name);
+                let stat = window.electronFs.statSync(fullPath);
+                let isDir = stat.isDirectory() ? 1 : 0;
+                let mtime = fileDate(stat.mtime);
+                let size = '';
+                if (!isDir) size = bytesToSize(stat.size);
+                if (name.indexOf('.') !== 0) {
+                    filesStat.push({ name, stat, isDir, mtime, size });
+                }
+            } catch (error) {
+                // skip files that throw errors
+            }
+        }
+        filesStat.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        filesStat.sort((a, b) => b.isDir - a.isDir);
+
+        let list = '<table class="w-full"><thead><tr>' +
+            '<th class="text-left">Name</th>' +
+            '<th class="text-left">Date modified</th>' +
+            '<th class="text-left">Size</th>' +
+            '</tr></thead>';
+        filesStat.forEach(f => {
+            list += `<tr dirName="${f.isDir ? f.name : ''}" draggable="true">
+                   <td>${f.isDir ? '&#128193;' : '&#128452;'} ${f.name}</td>
+                   <td>${f.mtime}</td>
+                   <td class="size">${f.size}</td>
+                 </tr>`;
+        });
+        list += '</table>';
+        filesTable.innerHTML = list;
+    }
+
+    function bytesToSize(bytes, separator = " ") {
+        const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes === 0) return '0 B';
+        const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)), 10);
+        return i === 0 ? `${bytes}${separator}${sizes[i]}` : `${(bytes / (1024 ** i)).toFixed(1)}${separator}${sizes[i]}`;
+    }
+
+    function fileDate(ms) {
+        return ms.getFullYear() + '-' + leadZeroDate(ms.getMonth() + 1) +
+            '-' + leadZeroDate(ms.getDate()) + ', ' + ms.toLocaleTimeString();
+    }
+
+    function leadZeroDate(num) {
+        return num < 10 ? `0${num}` : num;
+    }
+});

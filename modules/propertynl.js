@@ -11,14 +11,13 @@ async function scrapePropertyNL() {
     const page = await browser.newPage();
     await page.setUserAgent(ua);
     await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
-
-    // Navigeer naar property.nl
     await page.goto('https://propertynl.com', { waitUntil: 'networkidle2' });
     console.log("Landed on property.nl");
-
-    // Wacht 30 seconden zodat je de homepage kunt inspecteren
     await page.waitForTimeout(30000);
+    // Wacht 30 seconden zodat je de homepage kunt inspecteren
 
+
+    
     // Als je na deze pauze wilt beginnen met scrapen, verwijder de commentaar op onderstaande code:
 
     /*
