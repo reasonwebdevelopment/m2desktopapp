@@ -4,16 +4,9 @@ async function scrapeLogistiek() {
     const email = 'vdbout@live.nl';
     const wachtwoord = 'M2realestatebv';
 
-    const browser = await puppeteer.launch({
-        headless: false,
-        slowMo: 50,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
-
+    const browser = await puppeteer.launch({ headless: false, slowMo: 1 });
     const page = await browser.newPage();
-    await page.setUserAgent(
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
-    );
+    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
     await page.setViewport({ width: 1920, height: 1080 });
 
     console.log('[Scraper] Open homepage...');
@@ -28,10 +21,9 @@ async function scrapeLogistiek() {
         console.log('[Scraper] Geen cookie banner gevonden');
     }
 
-    // Klik op 'Inloggen' (zelfde selector als Vastgoedmarkt)
+    // Klik op 'Inloggen'
     await page.waitForSelector('.vmn-login', { timeout: 10000 });
     await page.click('.vmn-login');
-    await page.waitForTimeout(1000);
 
     // E-mail invoeren
     await page.waitForSelector('#enterEmail_email', { visible: true });
@@ -46,16 +38,24 @@ async function scrapeLogistiek() {
     await page.click('#login-password_next');
     console.log('[Scraper] Wachtwoord ingevoerd');
 
-    // Wachten op redirect naar ingelogde site
+    // Wachten op redirect
     await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 });
     console.log('[Scraper] Ingelogd en terug op site');
+    await page.goto('https://www.logistiek.nl/nieuws', { waitUntil: 'networkidle2' });
+    // ✅ Stap 1: Verzamel alle artikel links
+    const articleLinks = await page.$$eval('ul.articles li a', anchors =>
+        anchors.map(a => a.href)
+    );
 
-    // Screenshot ter controle /// HAHAHA funny het maakt oprecht een screensh
-    // await page.screenshot({ path: 'logistiek_ingelogd.png' });
+    console.log(`[Scraper] 🔗 ${articleLinks.length} artikel-links gevonden`);
+    console.log(articleLinks);
 
     await browser.close();
 
-    return { status: '✅ Ingelogd!' };
+    return {
+        status: '✅ Ingelogd en links verzameld!',
+        links: articleLinks
+    };
 }
 
 module.exports = {
