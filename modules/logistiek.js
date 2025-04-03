@@ -1,7 +1,8 @@
 const puppeteer = require('puppeteer');
 
 async function scrapeLogistiek() {
-    const ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36";
+    const email = 'vdbout@live.nl';
+    const wachtwoord = 'M2realestatebv';
 
     const browser = await puppeteer.launch({
         headless: false,
@@ -10,48 +11,51 @@ async function scrapeLogistiek() {
     });
 
     const page = await browser.newPage();
-    await page.setUserAgent(ua);
+    await page.setUserAgent(
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36'
+    );
     await page.setViewport({ width: 1920, height: 1080 });
 
-    // Stap 1: Ga naar de homepage
     console.log('[Scraper] Open homepage...');
     await page.goto('https://www.logistiek.nl', { waitUntil: 'networkidle2' });
+
+    // Cookie consent
     try {
-        console.log('[Scraper] Check op cookie banner...');
         await page.waitForSelector('#didomi-notice-agree-button', { timeout: 5000 });
         await page.click('#didomi-notice-agree-button');
         console.log('[Scraper] Cookie banner gesloten');
-    } catch (e) {
-        console.log('[Scraper] Geen cookie banner gevonden of timeout, ga door');
+    } catch {
+        console.log('[Scraper] Geen cookie banner gevonden');
     }
-    
-    // Stap 2: Klik op 'Inloggen'
-    console.log('[Scraper] Klik op login knop...');
-    await page.waitForSelector('a[href^="https://www.logistiek.nl/auth/redirect"]');
-    await page.click('a[href^="https://www.logistiek.nl/auth/redirect"]');
-    await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-    // Stap 3: Vul e-mailadres in
-    console.log('[Scraper] Vul e-mailadres in...');
-    await page.waitForSelector('input#enterEmail_email');
-    await page.type('input#enterEmail_email', 'test@email.com');
+    // Klik op 'Inloggen' (zelfde selector als Vastgoedmarkt)
+    await page.waitForSelector('.vmn-login', { timeout: 10000 });
+    await page.click('.vmn-login');
+    await page.waitForTimeout(1000);
 
-    // Enable de knop
-    await page.evaluate(() => {
-        const btn = document.querySelector('#enterEmail_next');
-        if (btn) btn.removeAttribute('disabled');
-    });
-
-    // Klik op "Ga verder"
+    // E-mail invoeren
+    await page.waitForSelector('#enterEmail_email', { visible: true });
+    await page.type('#enterEmail_email', email);
     await page.click('#enterEmail_next');
+    console.log('[Scraper] E-mail ingevoerd');
 
-    // Let op: je krijgt hierna waarschijnlijk een redirect naar een extern login-systeem
-    // zoals Azure AD, SURFconext, of eigen accountomgeving.
-    // De afhandeling daarvan moet handmatig of via cookies/sessies.
-    await page.waitForTimeout(5000); // wacht voor debug, of voeg extra stappen toe
+    // Wachtwoord invoeren
+    await page.waitForTimeout(2000);
+    await page.waitForSelector('input#login-password_password', { visible: true });
+    await page.type('input#login-password_password', wachtwoord);
+    await page.click('#login-password_next');
+    console.log('[Scraper] Wachtwoord ingevoerd');
+
+    // Wachten op redirect naar ingelogde site
+    await page.waitForNavigation({ waitUntil: 'networkidle2', timeout: 15000 });
+    console.log('[Scraper] Ingelogd en terug op site');
+
+    // Screenshot ter controle /// HAHAHA funny het maakt oprecht een screensh
+    // await page.screenshot({ path: 'logistiek_ingelogd.png' });
 
     await browser.close();
-    return { status: 'Login flow triggered (verder automatiseren mogelijk met credentials of sessie)' };
+
+    return { status: '✅ Ingelogd!' };
 }
 
 module.exports = {
