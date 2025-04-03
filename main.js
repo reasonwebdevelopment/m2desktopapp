@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const Vastgoedmarkt = require('./modules/vastgoedmarkt');
 const propertynl = require('./modules/propertynl'); // if you have this module too
+const logistiek = require('./modules/logistiek'); 
 const fs = require('fs');
 
 let windows = new Set();
@@ -12,7 +13,7 @@ function createWindow() {
         width: 800,
         height: 600,
         webPreferences: {
-            preload: path.join(__dirname, 'dist', 'preload.bundle.js'),
+            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: false,
             contextIsolation: true,
             webviewTag: true,
@@ -32,6 +33,12 @@ function createWindow() {
     ipcMain.handle('checkPropertyNL', async () => {
         return await propertynl.scrapePropertyNL();
     });
+
+    ipcMain.handle('checkLogistiek', async () => {
+        console.log('[Main] checkLogistiek handler triggered!');
+        return await logistiek.scrapeLogistiek();
+    });
+    
     win.webContents.openDevTools();
 }
 

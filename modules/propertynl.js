@@ -1,8 +1,3 @@
-// propertyScraper.js
-
-// E-mail: evan@reason.nl
-// Password: ReasonsToRikRollRikTheRikRoller25-03-2025
-
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 const ExcelJS = require('exceljs');
@@ -14,8 +9,6 @@ async function scrapePropertyNL() {
   const page = await browser.newPage();
   await page.setUserAgent(ua);
   await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
-  
-  // Ga naar de pagina met de bloglijst (pas deze URL aan naar jouw website)
   await page.goto('https://propertynl.com/Nieuws/Categorie/Transacties/15/50', { waitUntil: 'networkidle2' });
   
   // Wacht tot de container met de blogposts zichtbaar is

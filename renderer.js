@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Grab the DOM elements
     const btnVastgoedmarkt = document.getElementById('btn');           // Button for Vastgoedmarkt
     const btnPropertynl = document.getElementById('propertynl');      // Button for PropertyNL
+    const btnLogistiek = document.getElementById('btnLogistiek');
     const loader = document.getElementById('loader');
     const statustext = document.getElementById('statustext');
     const results = document.getElementById('results');
@@ -11,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // A generic function to run a scraper based on its name.
     async function runScraper(scraperName) {
         // Show the loader
+        console.log("Renderer: runScraper aangeroepen met:", scraperName);
         loader.classList.remove('hidden');
         let response;
         try {
@@ -20,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (scraperName === 'propertynl') {
                 console.log("Renderer: Invoking PropertyNL scraper");
                 response = await window.versions.checkPropertyNL();
+            } else if (scraperName === 'logistiek') {
+                console.log("Renderer: Invoking Logistiek scraper");
+                response = await window.versions.checkLogistiek(); // ✅ HIER
             } else {
                 console.error("Renderer: Unknown scraper name:", scraperName);
                 response = "Unknown scraper";
@@ -44,6 +49,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnPropertynl) {
         btnPropertynl.addEventListener('click', () => {
             runScraper('propertynl');
+        });
+    }
+
+    if (btnLogistiek) {
+        btnLogistiek.addEventListener('click', () => {
+            runScraper('logistiek');
         });
     }
 
