@@ -61,6 +61,8 @@ async function scrapeLogistiek() {
             break;
         }
     }
+
+    // Artiekel links opslaan in array.
     const articleLinks = await page.$$eval('ul.articles li a', anchors =>
         anchors.map(a => ({
             href: a.href,
@@ -70,6 +72,7 @@ async function scrapeLogistiek() {
 
     console.log(`[Scraper] 🔗 ${articleLinks.length} artikel-links gevonden`);
 
+   
     const scrapedArticles = [];
 
     for (const article of articleLinks) {
