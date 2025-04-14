@@ -18,13 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             if (scraperName === 'vastgoedmarkt') {
                 console.log("Renderer: Invoking Vastgoedmarkt scraper");
+                // 
                 response = await window.versions.checkVastgoedmarkt();
             } else if (scraperName === 'propertynl') {
                 console.log("Renderer: Invoking PropertyNL scraper");
                 response = await window.versions.checkPropertyNL();
             } else if (scraperName === 'logistiek') {
                 console.log("Renderer: Invoking Logistiek scraper");
-                response = await window.versions.checkLogistiek(); // ✅ HIER
+                response = await window.versions.checkLogistiek(); 
             } else {
                 console.error("Renderer: Unknown scraper name:", scraperName);
                 response = "Unknown scraper";

@@ -31,6 +31,7 @@ async function scrapeLogistiek() {
         console.log('[Scraper] Geen cookie banner gevonden');
     }
 
+    await page.goto('https://www.logistiek.nl', { waitUntil: 'networkidle2' });
     await page.waitForSelector('.vmn-login', { timeout: 10000 });
     await page.click('.vmn-login');
 
@@ -72,7 +73,7 @@ async function scrapeLogistiek() {
 
     console.log(`[Scraper] 🔗 ${articleLinks.length} artikel-links gevonden`);
 
-   
+
     const scrapedArticles = [];
 
     for (const article of articleLinks) {
