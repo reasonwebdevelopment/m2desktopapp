@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnVastgoedmarkt = document.getElementById('btn');           // Button for Vastgoedmarkt
     const btnPropertynl = document.getElementById('propertynl');      // Button for PropertyNL
     const btnLogistiek = document.getElementById('btnLogistiek');
+    const btnVastgoedjournaal = document.getElementById('btnVastgoedjournaal');
     const loader = document.getElementById('loader');
     const statustext = document.getElementById('statustext');
     const results = document.getElementById('results');
@@ -25,7 +26,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 response = await window.versions.checkPropertyNL();
             } else if (scraperName === 'logistiek') {
                 console.log("Renderer: Invoking Logistiek scraper");
-                response = await window.versions.checkLogistiek(); 
+                response = await window.versions.checkLogistiek();
+            } else if (scraperName === 'vastgoedjournaal') {
+                console.log("Renderer: Invoking vastgoedjournaal scraper");
+                response = await window.versions.checkVastgoedjournaal();
             } else {
                 console.error("Renderer: Unknown scraper name:", scraperName);
                 response = "Unknown scraper";
@@ -39,25 +43,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Attach event listener for Vastgoedmarkt button
     if (btnVastgoedmarkt) {
         btnVastgoedmarkt.addEventListener('click', () => {
             runScraper('vastgoedmarkt');
         });
     }
-
-    // Attach event listener for PropertyNL button, if it exists
     if (btnPropertynl) {
         btnPropertynl.addEventListener('click', () => {
             runScraper('propertynl');
         });
     }
-
     if (btnLogistiek) {
         btnLogistiek.addEventListener('click', () => {
             runScraper('logistiek');
         });
     }
+    if (btnVastgoedjournaal) {
+        btnVastgoedjournaal.addEventListener('click', () => {
+            runScraper('vastgoedjournaal')
+        })
+    }
+
 
     // Set up your IPC listeners for status updates and results
     window.electronAPI.onUpdateStatus((value) => {

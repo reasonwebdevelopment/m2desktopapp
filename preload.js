@@ -18,6 +18,7 @@ contextBridge.exposeInMainWorld('versions', {
   checkVastgoedmarkt: () => ipcRenderer.invoke('checkVastgoedmarkt'),
   checkPropertyNL: () => ipcRenderer.invoke('checkPropertyNL'),
   checkLogistiek: () => ipcRenderer.invoke('checkLogistiek'), 
+  checkVastgoedjournaal: () => ipcRenderer.invoke('checkVastgoedjournaal'), 
 });
 
 const fs = require('fs');

@@ -1,9 +1,9 @@
-// main.js
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const Vastgoedmarkt = require('./modules/vastgoedmarkt');
-const propertynl = require('./modules/propertynl'); // if you have this module too
+const propertynl = require('./modules/propertynl'); 
 const logistiek = require('./modules/logistiek'); 
+const Vastgoedjournaal = require('./modules/vastgoedjournaal');
 const fs = require('fs');
 
 let windows = new Set();
@@ -39,7 +39,12 @@ function createWindow() {
         return await logistiek.scrapeLogistiek();
     });
     
-    win.webContents.openDevTools();
+    ipcMain.handle('checkVastgoedjournaal', async () => {
+        console.log('[Main] checkVastgoedjournaal handler triggered!');
+        return await Vastgoedjournaal.scrapeVastgoedjournaal();
+    });
+    // Devtools haal of comment eruit voor gebruiker
+    // win.webContents.openDevTools();
 }
 
 app.whenReady().then(() => {
