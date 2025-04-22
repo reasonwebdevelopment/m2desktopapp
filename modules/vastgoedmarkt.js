@@ -1,220 +1,157 @@
-const puppeteer = require("puppeteer");
+const puppeteer = require('puppeteer');
 const fs = require('fs');
-const ExcelJS = require('exceljs');
-const { shell } = require('electron');
-const date = new Date().toJSON().slice(0, 10);
+const path = require('path');
+require('dotenv').config();
 
-async function scrapeVastgoedmarkt(win) {
-    console.log("Starting Vastgoedmarkt scraping...");
-    // Puppeteer launch
-    const ua = "Mozilla/5.0 (X11; Linux x86_64)...";
-    const browser = await puppeteer.launch({ headless: false, slowMo: 50 }); // slowMo helps you observe actions
-    const page = await browser.newPage();
-    console.log("New page created.");
+const KEYWORDS = [
+    'DC', 'dc', 'koopt', 'koop', 'huur', 'huurt', 'aanhuur',
+    'verkoop', 'verkoopt', 'verkocht', 'Verkocht',
+    'Warehouse', 'warehouse', 'Bedrijfsruimte', 'bedrijfsruimte',
+    'Logistiek', 'logistiek', 'Sale lease back', 'sale lease back',
+    'Nieuwe gebruiker', 'nieuwe gebruiker', 'Sale', 'sale',
+    'Purchase', 'purchase', 'Lease', 'lease', 'Leased', 'leased'
+];
 
-    await page.setUserAgent(ua);
-    await page.setViewport({ width: 1920, height: 1080, deviceScaleFactor: 1 });
-    const analyseArticles = [];
-    const importArticles = [];
+// ⏱ Wacht-hulpfunctie (vervanging voor page.waitForTimeout)
+const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-    await page.goto('https://www.vastgoedmarkt.nl/transacties');
+// Timestamp voor bestandsnamen
+function getTimestampString() {
+    const now = new Date();
+    const pad = (n) => n.toString().padStart(2, '0');
+    return `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}_${pad(now.getHours())}-${pad(now.getMinutes())}`;
+}
 
-    /**********  
-     * Login procedure and navigation
-     **********/
-    await page.waitForSelector('#didomi-notice-agree-button'); 
-    await page.click('#didomi-notice-agree-button');
+// Login op Vastgoedmarkt
+async function loginToVastgoedmarkt(page) {
+    const email = process.env.VGM_EMAIL;
+    const password = process.env.VGM_PASSWORD;
+
+    await page.goto('https://www.vastgoedmarkt.nl/transacties', { waitUntil: 'networkidle2' });
+    try {
+        await page.waitForSelector('#didomi-notice-agree-button', { timeout: 5000 });
+        await page.click('#didomi-notice-agree-button');
+    } catch { }
 
     await page.waitForSelector('.vmn-login');
     await page.click('.vmn-login');
-
-    await page.waitForTimeout(1000);
-
-    await page.waitForSelector('#enterEmail_email');
-    await page.type('#enterEmail_email', 'michiel@m2realestate.nl');
-
+    await wait(1000);
+    await page.type('#enterEmail_email', email);
     await page.click('#enterEmail_next');
-
-    await page.waitForTimeout(2000);
-
-    await page.waitForSelector('input#login-password_password');
-    await page.type('input#login-password_password', 'Micatolo18');
-
+    await wait(2000);
+    await page.type('input#login-password_password', password);
     await page.click('#login-password_next');
+    await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-    await page.waitForSelector('section[type="articles_summaries"]:first-child');
-    await page.click('section[type="articles_summaries"]:first-child .head a');
-
-    /**********
-     * Retrieve list of articles and filter interesting ones
-     **********/
-    await page.waitForSelector('.button.passive-arrow');
-
-    let iteratie = 0;
-    const nrIteraties = 15;
-
-    async function getArticles() {
-        iteratie += 1;
-
-        const ArticleResults = await page.evaluate(() => {
-            const articles = document.querySelectorAll(".summary");
-            return Array.from(articles).map(article => {
-                const url = article.href;
-                const title = article.querySelector(".title h2").innerText;
-                return { title, url };
-            });
-        });
-
-        console.log('------- Iteratie: ' + iteratie);
-
-        // Send status updates to the renderer window
-        switch (iteratie) {
-            case 1:
-                win.webContents.send('update-status', 'Verkochte objecten ophalen...');
-                break;
-            case 2:
-                win.webContents.send('update-status', 'Oppervlakte aan het berekenen...');
-                break;
-            case 3:
-                win.webContents.send('update-status', 'Bestemmingsplannen aan het wijzigen...');
-                break;
-            case 4:
-                win.webContents.send('update-status', 'OZB aan het berekenen...');
-                break;
-            case 5:
-                win.webContents.send('update-status', 'Koeien van het terrein aan het halen...');
-                break;
-            case 6:
-                win.webContents.send('update-status', 'Grote spelers aan het dwarsbomen...');
-                break;
-            case 7:
-                win.webContents.send('update-status', 'Deeltjes aan het versnellen...');
-                break;
-            case 8:
-                win.webContents.send('update-status', 'Atomen aan het splitten...');
-                break;
-            case 9:
-            case 10:
-                win.webContents.send('update-status', 'Verkochte objecten ophalen...');
-                break;
-            case 11:
-                win.webContents.send('update-status', 'Ammo aan het pakken...');
-                break;
-            case 12:
-                win.webContents.send('update-status', 'Aan het reloaden...');
-                break;
-            case 13:
-                win.webContents.send('update-status', 'Winner, winner, chicken dinner...');
-                break;
-            case 14:
-                win.webContents.send('update-status', 'Enemies met koekenpan aan het slaan...');
-                break;
-        }
-
-        if (iteratie <= nrIteraties) {
-            for (let i = 0; i < ArticleResults.length; i++) {
-                if (
-                    ArticleResults[i].title.includes("DC") ||
-                    ArticleResults[i].title.includes("dc") ||
-                    ArticleResults[i].title.includes("koopt")
-                ) {
-                    console.log('Interessante artikel -> Array');
-                    analyseArticles.push(ArticleResults[i].url);
-                }
-
-                if (i === ArticleResults.length - 1) {
-                    console.log('Door naar volgende pagina ->');
-                    await page.click('.button.passive-arrow:last-child');
-                    await page.waitForTimeout(5000);
-                    // Recursively retrieve the next set of articles
-                    ArticleResults.concat(await getArticles());
-                }
-            }
-        } else {
-            console.log('Analyseer nu alle links');
-            for (let i = 0; i < analyseArticles.length; i++) {
-                win.webContents.send('update-status', 'Schaapjes tellen: ' + i + ' schaapje(s)');
-                await page.goto(analyseArticles[i]);
-                await page.waitForSelector('.types-article-content');
-                const articleContent = await page.evaluate(() => {
-                    const title = document.querySelector('p[type="article_intro"]').innerText;
-                    const content = document.querySelector('.types-article-content').innerText;
-                    return { title, content };
-                });
-                importArticles.push(articleContent);
-            }
-        }
-
-        // Write the collected data to a JSON file
-        const json = JSON.stringify(importArticles, null, 2);
-        const filename = 'nieuweData_' + date + '.json';
-        fs.writeFile('./scrapeData/' + filename, json, (err) => {
-            if (!err) {
-                win.webContents.send('update-complete', true);
-                // Optionally, convert JSON to Excel after a delay:
-                // setTimeout(() => {
-                //   getExcel(filename);
-                // }, 5000);
-            }
-        });
-    }
-
-    // Start the article retrieval process
-    await getArticles();
-    return "Scraping complete!";
+    console.log('✅ Ingelogd op Vastgoedmarkt');
 }
 
-async function getExcel(filename) {
-    const filePath = './scrapeData/' + filename;
-    if (!fs.existsSync(filePath)) {
-        console.error('File does not exist:', filePath);
-        return;
-    }
-    let jsonData;
-    try {
-        const fileContent = fs.readFileSync(filePath, 'utf8');
-        if (!fileContent) throw new Error('File content is empty');
-        jsonData = JSON.parse(fileContent);
-    } catch (error) {
-        console.error('Error reading or parsing JSON file:', error);
-        return;
-    }
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Property Data');
-    worksheet.columns = [
-        { header: 'Transaction Type', key: 'transactionType', width: 15 },
-        { header: 'Project', key: 'project', width: 30 },
-        { header: 'Koper', key: 'koper', width: 30 },
-        { header: 'Locatie', key: 'locatie', width: 30 },
-        { header: 'Grootte', key: 'grootte', width: 15 },
-        { header: 'Kosten', key: 'kosten', width: 15 },
-    ];
+// Haalt relevante artikelen op basis van keywords
+async function getTransactionLinks(page, maxPages = 2) {
+    const links = [];
+    await page.waitForSelector('section[type="articles_summaries"]:first-child');
+    await page.click('section[type="articles_summaries"]:first-child .head a');
+    await page.waitForSelector('.button.passive-arrow');
 
-    jsonData.forEach(item => {
-        // Here you would extract and format the data as needed.
-        // For demonstration, we'll add placeholder data:
-        worksheet.addRow({
-            transactionType: 'Unknown',
-            project: item.title || 'Unknown',
-            koper: 'Unknown',
-            locatie: 'Unknown',
-            grootte: 'Unknown',
-            kosten: 'Unknown',
-        });
-    });
+    for (let i = 0; i < maxPages; i++) {
+        const pageLinks = await page.$$eval(".summary", (nodes, keywords) => {
+            return nodes.map(node => {
+                const title = node.querySelector(".title h2")?.innerText || '';
+                const url = node.href;
+                const matches = keywords.some(k => title.toLowerCase().includes(k.toLowerCase()));
+                return matches ? { url, title } : null;
+            }).filter(Boolean);
+        }, KEYWORDS);
+        links.push(...pageLinks);
 
-    const newexcelfile = 'nieuweData_' + date + '.xlsx';
-    const outputFilePath = './excelData/' + newexcelfile;
+        const nextButton = await page.$('.button.passive-arrow:last-child');
+        if (!nextButton) break;
+        await nextButton.click();
+        await wait(3000);
+    }
+
+    console.log(`🔍 ${links.length} relevante artikelen gevonden`);
+    return links;
+}
+
+// Scrape detaildata van elk artikel
+async function scrapeTransactionDetail(page, link) {
     try {
-        await workbook.xlsx.writeFile(outputFilePath);
-        shell.openPath('./excelData/');
-        shell.showItemInFolder(newexcelfile);
+        await page.goto(link.url, { waitUntil: 'networkidle2' });
+        await page.waitForSelector('.types-article-content', { timeout: 5000 });
+
+        const content = await page.evaluate(() => ({
+            title: document.querySelector('p[type="article_intro"]')?.innerText || '',
+            content: document.querySelector('.types-article-content')?.innerText || ''
+        }));
+
+        return { ...content, url: link.url };
     } catch (err) {
-        console.error('Error writing Excel file:', err);
+        console.warn(`⚠️  Fout bij ${link.url}: ${err.message}`);
+        return null;
+    }
+}
+
+// JSON-export
+function exportToJson(data) {
+    const timestamp = getTimestampString();
+    const dir = path.join(__dirname, '../VastgoedmarktTransacties/JSON');
+    fs.mkdirSync(dir, { recursive: true });
+
+    const filePath = path.join(dir, `vastgoedmarkt_${timestamp}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+    console.log(`💾 JSON opgeslagen op ${filePath}`);
+    return filePath;
+}
+
+// Main functie
+async function scrapeVastgoedmarkt() {
+    const browser = await puppeteer.launch({ headless: false, slowmo: 50 });
+    const page = await browser.newPage();
+    await page.setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36');
+    await page.setViewport({ width: 1920, height: 1080 });
+
+    try {
+        await loginToVastgoedmarkt(page);
+        const links = await getTransactionLinks(page);
+        const data = [];
+
+        const messages = {
+            1: 'Verkochte objecten ophalen...',
+            2: 'Oppervlakte aan het berekenen...',
+            3: 'Bestemmingsplannen aan het wijzigen...',
+            4: 'OZB aan het berekenen...',
+            5: 'Koeien van het terrein aan het halen...',
+            6: 'Grote spelers aan het dwarsbomen...',
+            7: 'Deeltjes aan het versnellen...',
+            8: 'Atomen aan het splitten...',
+            11: 'Ammo aan het pakken...',
+            12: 'Aan het reloaden...',
+            13: 'Winner, winner, chicken dinner...',
+            14: 'Enemies met koekenpan aan het slaan...'
+        };
+
+        for (let i = 0; i < links.length; i++) {
+            const message = messages[i + 1];
+            if (message) console.log(`🧠 ${message}`);
+
+            const result = await scrapeTransactionDetail(page, links[i]);
+            if (result) {
+                result.url = links[i].url;
+                data.push(result);
+                console.log(`(${i + 1}/${links.length}) ✅ Gescrapet: ${result.title}`);
+            }
+        }
+
+        exportToJson(data);
+    } catch (err) {
+        console.error('❌ Fout tijdens scraping:', err.message);
+    } finally {
+        await browser.close();
     }
 }
 
 module.exports = {
     scrapeVastgoedmarkt,
-    getExcel
+    getTimestampString
 };
