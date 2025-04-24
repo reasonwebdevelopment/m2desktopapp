@@ -1,0 +1,658 @@
+[
+  {
+    "Object": "Belegging, verhuurd bedrijfspand",
+    "Adres": "Kaaistraat 03/May,  Sint-Maartensdijk, , Zeeland",
+    "Grootte": "279 m²",
+    "Koper": "Looten en Naserie",
+    "Bedrag": "€ 312.500",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363663"
+  },
+  {
+    "Object": "opslagruimte  ",
+    "Adres": "De Padweie 23,  Serooskerke, , Zeeland",
+    "Grootte": "60 m²",
+    "Koper": "Koffiebranderij de Koepoort",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363662"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Gentsevaart 21, 4565 ER Kapellebrug, hulst, Zeeland",
+    "Grootte": "20300 m²",
+    "Koper": "R. van Wesemael Beheermaatschappij B.V.",
+    "Bedrag": "€ 1.522.500",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/367492"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "fagotweg 11, 4337 RC Middelburg, Middelburg, Zeeland",
+    "Grootte": "216 m²",
+    "Koper": "Pieter Kriekaart - Nader op te richten eenmanszaak",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/371491"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "livingstoneweg 5b, 4462 GL Goes, Goes, Zeeland",
+    "Grootte": "1610 m²",
+    "Koper": "Selecta Infrastructuur B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/332946"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "A. Hofmanweg 2G, 2031 BH Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "232 m²",
+    "Koper": "Expo Rockstars B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/322947"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Kruitmolenlaan 185, 4337 KP middelburg, Middelburg, Zeeland",
+    "Grootte": "350 m²",
+    "Koper": "Olyk BV",
+    "Bedrag": "€ 1.450.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/327134"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Wielingenstraat 2a, 4454 BL Borssele, Borsele, Zeeland",
+    "Grootte": "347 m²",
+    "Koper": "Cooperatie Dorpswelzijn Borssele U.A.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/328209"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "van doornestraat 9G, 4462 EX Goes, Goes, Zeeland",
+    "Grootte": "0 m²",
+    "Koper": "Gaud Project",
+    "Bedrag": "€ 129.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/361230"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Conradweg 5B, 2031 CM Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "180 m²",
+    "Koper": "Triple A Autoservice",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/340216"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Graftermeerstraat 49E, 2131 AA Hoofddorp, Hoofddorp, Noord-Holland",
+    "Grootte": "120 m²",
+    "Koper": "V.O.F. Gekoo Groendaken",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/338762"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "klein frankrijk 29, 4461 ZN Goes, Goes, Zeeland",
+    "Grootte": "1294 m²",
+    "Koper": "ZLM",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/322948"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Hulswitweg 89, 2031 BG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "126 m²",
+    "Koper": "Nederlandse Verkeersondersteuning B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/329708"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Hulswitweg 101, 2031 BG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "242 m²",
+    "Koper": "Durlum Nederland B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/337524"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Hermesweg 12, 4382 NB Vlissingen, Vlissingen, Zeeland",
+    "Grootte": "410 m²",
+    "Koper": "Eenmanszaak Weronika Zielinska",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/333502"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Hulswitweg 109, 2031 BG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "174 m²",
+    "Koper": "Rubio Monocoat Nederland B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/338716"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "columbusweg 44,4a,4b, 4462 HB Goes, Goes, Zeeland",
+    "Grootte": "800 m²",
+    "Koper": "Flips-stoffering en verkoop-goederen",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/362710"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Hulswitweg 121, 2031 BG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "164 m²",
+    "Koper": "Verhuurbedrijf B. Hangjas",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/324048"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Hulswitweg 59, 2031 BG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "126 m²",
+    "Koper": "Mistral uitzendbureau",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/326185"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "jan van krimpenweg 58, 2031 CH Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "164 m²",
+    "Koper": "M.P.C. van der Veldt Holding B.V.",
+    "Bedrag": "€ 250.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/338074"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Hulswitweg 77, 2031 BG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "158 m²",
+    "Koper": "Global Guide Systems B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/327856"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Octrooiweg 1212a, 4387 PJ Vlissingen, Vlissingen, Zeeland",
+    "Grootte": "796 m²",
+    "Koper": "Serroukh en Bouazzata",
+    "Bedrag": "€ 650.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/333635"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Harlemmerstraatweg 161, 1165 MK Halfweg, Haarlemmermeer, Noord-Holland",
+    "Grootte": "1180 m²",
+    "Koper": "Particulier",
+    "Bedrag": "€ 1.244.760",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/331677"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "A. Hofmanweg 34C, 2031 BL Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "145 m²",
+    "Koper": "Show Support B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/335975"
+  },
+  {
+    "Object": "gem bedr/kant",
+    "Adres": "Izaak Enschedeweg 42N, 2031 CS Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "130 m²",
+    "Koper": "Voltfiets B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/336028"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "columbusweg 4E, 4462 HB Goes, Goes, Zeeland",
+    "Grootte": "154 m²",
+    "Koper": "BeliNed ( Belisol Goes)",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363517"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Roterij 6F, 4327 AB Burgh-Haamstede, Westerschouwen, Zeeland",
+    "Grootte": "78 m²",
+    "Koper": "Auto Flikweert VOF",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/376145"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Grevelingenstraat 31, 4301 XZ Zierikzee, Zierikzee, Zeeland",
+    "Grootte": "1041 m²",
+    "Koper": "Home Deco Zierikzee B.V.",
+    "Bedrag": "€ 1.250.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/366376"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Kerklaan 1, 4381 HR vlissingen, Vlissingen, Zeeland",
+    "Grootte": "0 m²",
+    "Koper": "NUQTA Fine arts & Photography Habibi",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/339197"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Kanaalstraat 84, 4388 BP Oost-souburg, Vlissingen, Zeeland",
+    "Grootte": "169 m²",
+    "Koper": "N Tech",
+    "Bedrag": "€ 178.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/348975"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "oudelandseweg 23, 4536 HK terneuzen, terneuzen, Zeeland",
+    "Grootte": "0 m²",
+    "Koper": "Jan Minnaard beheer BV",
+    "Bedrag": "€ 210.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/327765"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Wateringweg 139, 2031 EG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "75 m²",
+    "Koper": "Particulier",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/337330"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "badhuisstraat 104106,108, 4381 LV Vlissingen, Vlissingen, Zeeland",
+    "Grootte": "1467 m²",
+    "Koper": "Stichting JG",
+    "Bedrag": "€ 1.475.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/347505"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Grevelingenstraat 31,  Zierikzee, , Zeeland",
+    "Grootte": "1041 m²",
+    "Koper": "Verspoor Holding BV",
+    "Bedrag": "€ 1.250.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363678"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Kerkring 17,  Grijpskerke, , Zeeland",
+    "Grootte": "561 m²",
+    "Koper": "H-int B.V.",
+    "Bedrag": "€ 449.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363653"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Izaak Enschedeweg 42E, 2031 CS Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "65 m²",
+    "Koper": "De Fietsfreak B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/327629"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Wateringweg 147, 2031 EG Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "70 m²",
+    "Koper": "Bright Future Vastgoed B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/338763"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Beukenhof 10, 4462 EN Goes, Goes, Zeeland",
+    "Grootte": "115 m²",
+    "Koper": "The Burger Hub B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/351054"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "eberhardtweg 3N, 4462 HH Goes, Goes, Zeeland",
+    "Grootte": "0 m²",
+    "Koper": "Tamer Transport",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/333634"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Conradweg 20, 2031 CM Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "900 m²",
+    "Koper": "TooManyAgencies B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/340924"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "nieuwe kleverskerkseweg 2102, 4338 PP Middelburg, Middelburg, Zeeland",
+    "Grootte": "94 m²",
+    "Koper": "AVBmontage",
+    "Bedrag": "€ 125.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/354215"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Eberhardtweg 3k,  Goes, , Zeeland",
+    "Grootte": "148 m²",
+    "Koper": "Eazer Faiclity B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363657"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Uijterschootweg 22, 4338 PN Middelburg, , Zeeland",
+    "Grootte": "1430 m²",
+    "Koper": "De Pagter Beheer B.V.",
+    "Bedrag": "€ 1.550.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363689"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Gildeweg 1610, 4383 NK Vlissingen, Vlissingen, Zeeland",
+    "Grootte": "0 m²",
+    "Koper": "Shannons kaas en vleeswaren",
+    "Bedrag": "€ 220.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/360647"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "'s-Heer Hendrikskinderendijk 10111, 4461 EA Goes, Goes, Zeeland",
+    "Grootte": "31 m²",
+    "Koper": "Rens van Nierop ~ Little PIT",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/341523"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Kaaistraat 03/May,  Sint-Maartensdijk, , Zeeland",
+    "Grootte": "279 m²",
+    "Koper": "Looten en Naserie",
+    "Bedrag": "€ 312.500",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363663"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Waarderweg 33B-2, 2031 BN Haarlem, Haarlem, Noord-Holland",
+    "Grootte": "95 m²",
+    "Koper": "Particulier",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/330479"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Kromme Dpieringweg 205, 2141 BP Vijfhuizen, Haarlemmermeer, Noord-Holland",
+    "Grootte": "193 m²",
+    "Koper": "Michel's Exclusive and special cars B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/322949"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "elektraweg 27, 4338 PK middelburg, Middelburg, Zeeland",
+    "Grootte": "236 m²",
+    "Koper": "T3 IT-Consult B.V.",
+    "Bedrag": "€ 225.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/325777"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Aagje Dekenstraat 8, 4381 RZ Vlissingen, Vlissingen, Zeeland",
+    "Grootte": "0 m²",
+    "Koper": "Waroeng Kampoeng",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/324397"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Duinzoom 30002, 4325 HA renesse, Schouwen-Duiveland, Zeeland",
+    "Grootte": "271 m²",
+    "Koper": "Gemeente Schouwen-duiveland",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/361084"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "industrieweg 44 440003-0008-, 4301 RS Zierikzee, Zierikzee, Zeeland",
+    "Grootte": "267 m²",
+    "Koper": "LJ beheer bv",
+    "Bedrag": "€ 300.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/345704"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "markt 3537, 4331 LJ Middelburg, Middelburg, Zeeland",
+    "Grootte": "268 m²",
+    "Koper": "Dhr Dora en dhr Bongers",
+    "Bedrag": "€ 750.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/356719"
+  },
+  {
+    "Object": "bedrijfspand",
+    "Adres": "Duinzoom 50008, 4325 HA renesse, Schouwen-Duiveland, Zeeland",
+    "Grootte": "68 m²",
+    "Koper": "Eenmanszaak BvA Bouw en Dienstverlening",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/360079"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Hermesweg 12,  Vlissingen, , Zeeland",
+    "Grootte": "410 m²",
+    "Koper": "Eenmanszaak Sylwia Zielinska",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363656"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Eberhardtweg 3e, 4462 HH Goes, , Zeeland",
+    "Grootte": "163 m²",
+    "Koper": "Mobiele Camera Nederland B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363687"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Amundsenweg 37, 4462 GP Goes, , Zeeland",
+    "Grootte": "1390 m²",
+    "Koper": "Stichting Plutus",
+    "Bedrag": "€ 1.575.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363684"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Industrieweg 4410, 4301 RS Zierikzee, , Zeeland",
+    "Grootte": "91 m²",
+    "Koper": "L.J. Beheer B.V.",
+    "Bedrag": "€ 100.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363683"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Industrieweg 448, 4301 RS Zierikzee, , Zeeland",
+    "Grootte": "88 m²",
+    "Koper": "L.J. Beheer B.V.",
+    "Bedrag": "€ 100.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363682"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Industrieweg 443, 4301 RS Zierikzee, , Zeeland",
+    "Grootte": "88 m²",
+    "Koper": "L.J. Beheer B.V.",
+    "Bedrag": "€ 100.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363681"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Eberhardtweg 3o, 4462 HH Goes, , Zeeland",
+    "Grootte": "254 m²",
+    "Koper": "Famco B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363672"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Techniekweg 511,  Zierikzee, , Zeeland",
+    "Grootte": "188 m²",
+    "Koper": "Nedvast I B.V.",
+    "Bedrag": "€ 225.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363670"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Bedrijfsweg 23a,b,c,  Vlissingen, , Zeeland",
+    "Grootte": "187 m²",
+    "Koper": "E.P.E.F. Klapwijk & C.A. van Loenen",
+    "Bedrag": "€ 21.087.062",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363669"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Eberhardtweg 3p,  Goes, , Zeeland",
+    "Grootte": "245 m²",
+    "Koper": "Brabant Science B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363666"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Bedrijfsweg 23d,  Vlissingen, , Zeeland",
+    "Grootte": "83 m²",
+    "Koper": "Soffers Information Technology & Consultancy B.V.",
+    "Bedrag": "€ 245.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363658"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Nobelweg 10,  Goes, , Zeeland",
+    "Grootte": "394 m²",
+    "Koper": "Infinity Vitamins B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363627"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Kerklaan 2,  Heinkenszand, , Zeeland",
+    "Grootte": "114 m²",
+    "Koper": "Villa viva Partners BV",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363655"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Gildeweg 12,  Vlissingen, , Zeeland",
+    "Grootte": "256 m²",
+    "Koper": "Holding E. Jansma B.V. en Holding I. van Boven B.V.",
+    "Bedrag": "€ 285.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363652"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Gildeweg 12c,  Vlissingen, , Zeeland",
+    "Grootte": "248 m²",
+    "Koper": "Deij Consultancy B.V.",
+    "Bedrag": "€ 295.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363651"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Eberhardtweg 3n,  Goes, , Zeeland",
+    "Grootte": "245 m²",
+    "Koper": "Tamer Transport",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363650"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Livingstoneweg 5b,  Goes, , Zeeland",
+    "Grootte": "650 m²",
+    "Koper": "Selecta Infrastructuur B.V.",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363649"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Oudelandseweg 23,  Terneuzen, , Zeeland",
+    "Grootte": "1 m²",
+    "Koper": "Jan Minnaard beheer BV",
+    "Bedrag": "€ 210.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363637"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Kruitmolenlaan 185,  Middelburg, , Zeeland",
+    "Grootte": "350 m²",
+    "Koper": "Kithmore, olyk",
+    "Bedrag": "€ 1.450.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363633"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Oudestraat 14+14a,  Bruinisse, , Zeeland",
+    "Grootte": "245 m²",
+    "Koper": "dhr. Flach",
+    "Bedrag": "€ 325.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363630"
+  },
+  {
+    "Object": "Bedrijfsruimte",
+    "Adres": "Arnesteinweg 65,  Middelburg, , Zeeland",
+    "Grootte": "3880 m²",
+    "Koper": "Van der Veen Magazijnstellingen",
+    "Bedrag": "€ -",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363628"
+  },
+  {
+    "Object": "belegging",
+    "Adres": "Nieuwe Burg 20, 4331 AH Middelburg, Middelburg, Zeeland",
+    "Grootte": "285 m²",
+    "Koper": "JT Beheer B.V.",
+    "Bedrag": "€ 650.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/370070"
+  },
+  {
+    "Object": "belegging",
+    "Adres": "zusterstraat 18,  Middelburg, , Zeeland",
+    "Grootte": "110 m²",
+    "Koper": "Namelle Verhuur BV",
+    "Bedrag": "€ 300.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363638"
+  },
+  {
+    "Object": "belegging",
+    "Adres": "Weststraat 05/Jul,  Kapelle, , Zeeland",
+    "Grootte": "1 m²",
+    "Koper": "Locusta vastgoed bv",
+    "Bedrag": "€ 1.175.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363642"
+  },
+  {
+    "Object": "belegging",
+    "Adres": "Kaaistraat 03/May,  Sint-Maartensdijk, , Zeeland",
+    "Grootte": "279 m²",
+    "Koper": "Looten en Naserie",
+    "Bedrag": "€ 312.500",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363663"
+  },
+  {
+    "Object": "belegging",
+    "Adres": "Houttuinen 20, 4461 BK Goes, , Zeeland",
+    "Grootte": "637 m²",
+    "Koper": "Stichting JG",
+    "Bedrag": "€ 650.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363685"
+  },
+  {
+    "Object": "belegging",
+    "Adres": "Badhuisstraat 104-106-10, 4381 LV Vlissingen, , Zeeland",
+    "Grootte": "830 m²",
+    "Koper": "stichting JG",
+    "Bedrag": "€ 1.475.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363686"
+  },
+  {
+    "Object": "belegging",
+    "Adres": "Beestenmarkt 8, 4461 CT Goes, , Zeeland",
+    "Grootte": "181 m²",
+    "Koper": "De heer J. Bax",
+    "Bedrag": "€ 320.000",
+    "URL": "https://vastgoedjournaal.nl/vastgoedtransacties/transactie/363694"
+  }
+]

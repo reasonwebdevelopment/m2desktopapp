@@ -76,7 +76,7 @@ async function getTransactionLinks(page, category) {
         return [];
     }
     // Filteren op jaartallen
-    const links = await filterTransactionLinksByYears(page, ['2025']);
+    const links = await filterTransactionLinksByYears(page, ['2025','2024']);
     return links.map(url => ({ categorie: category, url }));
 }
 
@@ -111,7 +111,7 @@ async function scrapeTransactionDetail(page, url, categorie) {
             Grootte: data.oppervlakte + ' m²',
             Koper: data.koper !== 'onbekend' ? data.koper : data.adviseur_koper,
             Bedrag: data.koopprijs,
-            'Artikel URL': data.url,
+            'URL': data.url,
         };
     } catch (err) {
         console.warn(`FOUT bij ${url}: ${err.message}`);
@@ -122,7 +122,7 @@ async function scrapeTransactionDetail(page, url, categorie) {
 // slaat scraped data op in json file 
 function getJson(data) {
     const timestamp = getTimestampString();
-    const exportDir = path.join(__dirname, '../VastgoedjournaalTransacties/JSON');
+    const exportDir = path.join(__dirname, '../Transacties/VastgoedjournaalTransacties/JSON');
     fs.mkdirSync(exportDir, { recursive: true });
 
     const jsonPath = path.join(exportDir, `vastgoedjournaal_${timestamp}.json`);
@@ -133,7 +133,7 @@ function getJson(data) {
 // slaat scraped data op in excel 
 function getExcel(data) {
     const timestamp = getTimestampString();
-    const exportDir = path.join(__dirname, '../VastgoedjournaalTransacties/Excel');
+    const exportDir = path.join(__dirname, '../Transacties/VastgoedjournaalTransacties/Excel');
     fs.mkdirSync(exportDir, { recursive: true });
 
     const workbook = new ExcelJS.Workbook();
@@ -144,7 +144,7 @@ function getExcel(data) {
         { header: 'Grootte', key: 'Grootte', width: 15 },
         { header: 'Koper', key: 'Koper', width: 40 },
         { header: 'Bedrag', key: 'Bedrag', width: 20 },
-        { header: 'Artikel URL', key: 'Artikel URL', width: 60 },
+        { header: 'URL', key: 'URL', width: 60 },
     ];
     data.forEach(row => sheet.addRow(row));
 

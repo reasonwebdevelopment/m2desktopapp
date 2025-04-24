@@ -16,7 +16,6 @@ contextBridge.exposeInMainWorld('versions', {
   chrome: () => process.versions.chrome,
   electron: () => process.versions.electron,
   checkVastgoedmarkt: () => ipcRenderer.invoke('checkVastgoedmarkt'),
-  checkPropertyNL: () => ipcRenderer.invoke('checkPropertyNL'),
   checkLogistiek: () => ipcRenderer.invoke('checkLogistiek'), 
   checkVastgoedjournaal: () => ipcRenderer.invoke('checkVastgoedjournaal'), 
 });

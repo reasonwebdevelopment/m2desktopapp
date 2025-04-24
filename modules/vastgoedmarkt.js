@@ -12,7 +12,7 @@ const KEYWORDS = [
     'Purchase', 'purchase', 'Lease', 'lease', 'Leased', 'leased'
 ];
 
-// ⏱ Wacht-hulpfunctie (vervanging voor page.waitForTimeout)
+//Wacht-hulpfunctie (vervanging voor page.waitForTimeout)
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Timestamp voor bestandsnamen
@@ -25,29 +25,54 @@ function getTimestampString() {
 // Login op Vastgoedmarkt
 async function loginToVastgoedmarkt(page) {
     const email = process.env.VGM_EMAIL;
-    const password = process.env.VGM_PASSWORD;
+    const wachtwoord = process.env.VGM_PASSWORD;
 
     await page.goto('https://www.vastgoedmarkt.nl/transacties', { waitUntil: 'networkidle2' });
+
+    // Cookie banner sluiten indien aanwezig
     try {
         await page.waitForSelector('#didomi-notice-agree-button', { timeout: 5000 });
         await page.click('#didomi-notice-agree-button');
     } catch { }
 
-    await page.waitForSelector('.vmn-login');
+    // Klik op login-knop
+    await page.waitForSelector('.vmn-login', { visible: true });
     await page.click('.vmn-login');
-    await wait(1000);
-    await page.type('#enterEmail_email', email);
-    await page.click('#enterEmail_next');
-    await wait(2000);
-    await page.type('input#login-password_password', password);
-    await page.click('#login-password_next');
-    await page.waitForNavigation({ waitUntil: 'networkidle2' });
 
-    console.log('✅ Ingelogd op Vastgoedmarkt');
+    // Vul e-mailadres in
+    await page.waitForSelector('#enterEmail_email', { visible: true });
+    await page.type('#enterEmail_email', email);
+
+    // Forceer frontend-validatie zodat knop activeert
+    await page.evaluate(() => {
+        const input = document.querySelector('#enterEmail_email');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+
+    // Wacht tot knop actief wordt en klik
+    await page.waitForFunction(() => {
+        const btn = document.querySelector('#enterEmail_next');
+        return btn && !btn.disabled;
+    }, { timeout: 5000 });
+    await page.click('#enterEmail_next');
+
+    // Vul wachtwoord in
+    await page.waitForSelector('#login-password_password', { visible: true });
+    await page.type('#login-password_password', wachtwoord);
+
+    // Klik op inloggen
+    await page.waitForFunction(() => {
+        const btn = document.querySelector('#login-password_next');
+        return btn && !btn.disabled;
+    }, { timeout: 5000 });
+    await page.click('#login-password_next');
+
+    await page.waitForNavigation({ waitUntil: 'networkidle2' });
+    console.log('✅ Ingelogd op Vastgoedmarkt.nl');
 }
 
 // Haalt relevante artikelen op basis van keywords
-async function getTransactionLinks(page, maxPages = 2) {
+async function getTransactionLinks(page, maxPages = 5) {
     const links = [];
     await page.waitForSelector('section[type="articles_summaries"]:first-child');
     await page.click('section[type="articles_summaries"]:first-child .head a');
@@ -70,7 +95,7 @@ async function getTransactionLinks(page, maxPages = 2) {
         await wait(3000);
     }
 
-    console.log(`🔍 ${links.length} relevante artikelen gevonden`);
+    console.log(`${links.length} relevante artikelen gevonden`);
     return links;
 }
 
@@ -87,7 +112,7 @@ async function scrapeTransactionDetail(page, link) {
 
         return { ...content, url: link.url };
     } catch (err) {
-        console.warn(`⚠️  Fout bij ${link.url}: ${err.message}`);
+        console.warn(`Fout bij ${link.url}: ${err.message}`);
         return null;
     }
 }
@@ -95,12 +120,12 @@ async function scrapeTransactionDetail(page, link) {
 // JSON-export
 function exportToJson(data) {
     const timestamp = getTimestampString();
-    const dir = path.join(__dirname, '../VastgoedmarktTransacties/JSON');
+    const dir = path.join(__dirname, '../Transacties/VastgoedmarktTransacties/JSON');
     fs.mkdirSync(dir, { recursive: true });
 
     const filePath = path.join(dir, `vastgoedmarkt_${timestamp}.json`);
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    console.log(`💾 JSON opgeslagen op ${filePath}`);
+    console.log(`JSON opgeslagen op ${filePath}`);
     return filePath;
 }
 
@@ -133,19 +158,19 @@ async function scrapeVastgoedmarkt() {
 
         for (let i = 0; i < links.length; i++) {
             const message = messages[i + 1];
-            if (message) console.log(`🧠 ${message}`);
+            if (message) console.log(`${message}`);
 
             const result = await scrapeTransactionDetail(page, links[i]);
             if (result) {
                 result.url = links[i].url;
                 data.push(result);
-                console.log(`(${i + 1}/${links.length}) ✅ Gescrapet: ${result.title}`);
+                console.log(`(${i + 1}/${links.length}) Gescrapet: ${result.title}`);
             }
         }
 
         exportToJson(data);
     } catch (err) {
-        console.error('❌ Fout tijdens scraping:', err.message);
+        console.error('Fout tijdens scraping:', err.message);
     } finally {
         await browser.close();
     }

@@ -2,7 +2,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Grab the DOM elements
     const btnVastgoedmarkt = document.getElementById('btn');           // Button for Vastgoedmarkt
-    const btnPropertynl = document.getElementById('propertynl');      // Button for PropertyNL
     const btnLogistiek = document.getElementById('btnLogistiek');
     const btnVastgoedjournaal = document.getElementById('btnVastgoedjournaal');
     const loader = document.getElementById('loader');
@@ -21,9 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log("Renderer: Invoking Vastgoedmarkt scraper");
                 // 
                 response = await window.versions.checkVastgoedmarkt();
-            } else if (scraperName === 'propertynl') {
-                console.log("Renderer: Invoking PropertyNL scraper");
-                response = await window.versions.checkPropertyNL();
             } else if (scraperName === 'logistiek') {
                 console.log("Renderer: Invoking Logistiek scraper");
                 response = await window.versions.checkLogistiek();
@@ -46,11 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnVastgoedmarkt) {
         btnVastgoedmarkt.addEventListener('click', () => {
             runScraper('vastgoedmarkt');
-        });
-    }
-    if (btnPropertynl) {
-        btnPropertynl.addEventListener('click', () => {
-            runScraper('propertynl');
         });
     }
     if (btnLogistiek) {

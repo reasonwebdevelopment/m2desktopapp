@@ -1,7 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const Vastgoedmarkt = require('./modules/vastgoedmarkt');
-const propertynl = require('./modules/propertynl'); 
 const logistiek = require('./modules/logistiek'); 
 const Vastgoedjournaal = require('./modules/vastgoedjournaal');
 const fs = require('fs');
