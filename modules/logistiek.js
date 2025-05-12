@@ -12,10 +12,29 @@ const keywords = [
     'Purchase', 'purchase', 'Lease', 'lease', 'Leased', 'leased'
 ];
 
-function getTimestampString() {
+function isArticleFromPreviousMonth(datetimeStr) {
+    const pubDate = new Date(datetimeStr);
     const now = new Date();
-    const pad = (n) => n.toString().padStart(2, '0');
-    return `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}_${pad(now.getHours())}-${pad(now.getMinutes())}`;
+
+    const vorigeMaand = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    const vorigJaar = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+
+    return pubDate.getMonth() === vorigeMaand && pubDate.getFullYear() === vorigJaar;
+}
+
+function getPreviousMonthFilename() {
+    const now = new Date();
+    const maanden = [
+        "januari", "februari", "maart", "april", "mei", "juni",
+        "juli", "augustus", "september", "oktober", "november", "december"
+    ];
+    const maand = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
+    const jaar = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+    return `logistiek_${maanden[maand]}_${jaar}.json`;
+}
+
+function matchesKeywords(text) {
+    return keywords.some(k => text.toLowerCase().includes(k.toLowerCase()));
 }
 
 async function loginToLogistiek(page) {
@@ -24,77 +43,94 @@ async function loginToLogistiek(page) {
 
     await page.goto('https://www.logistiek.nl', { waitUntil: 'networkidle2' });
 
-    // Cookie banner sluiten indien aanwezig
     try {
         await page.waitForSelector('#didomi-notice-agree-button', { timeout: 5000 });
         await page.click('#didomi-notice-agree-button');
     } catch { }
 
-    // Klik op login-knop
     await page.waitForSelector('.vmn-login', { visible: true });
     await page.click('.vmn-login');
 
-    // Vul e-mailadres in
     await page.waitForSelector('#enterEmail_email', { visible: true });
     await page.type('#enterEmail_email', email);
-
-    // Forceer frontend-validatie zodat knop activeert
     await page.evaluate(() => {
         const input = document.querySelector('#enterEmail_email');
         input.dispatchEvent(new Event('input', { bubbles: true }));
     });
 
-    // Wacht tot knop actief wordt en klik
     await page.waitForFunction(() => {
         const btn = document.querySelector('#enterEmail_next');
         return btn && !btn.disabled;
-    }, { timeout: 5000 });
+    });
     await page.click('#enterEmail_next');
 
-    // Vul wachtwoord in
     await page.waitForSelector('#login-password_password', { visible: true });
     await page.type('#login-password_password', wachtwoord);
 
-    // Klik op inloggen
     await page.waitForFunction(() => {
         const btn = document.querySelector('#login-password_next');
         return btn && !btn.disabled;
-    }, { timeout: 5000 });
+    });
     await page.click('#login-password_next');
 
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     console.log('✅ Ingelogd op Logistiek.nl');
 }
 
-
-async function getArticleLinks(page, maxClicks = 5) {
+async function getArticleLinks(page) {
     await page.goto('https://www.logistiek.nl/nieuws', { waitUntil: 'networkidle2' });
 
-    for (let i = 0; i < maxClicks; i++) {
+    let allLinks = [];
+    let clickCounter = 0;
+    let foundAnyFromPreviousMonth = false;
+
+    while (true) {
+        const newLinks = await page.$$eval('ul.articles li a', nodes =>
+            nodes.map(a => {
+                const title = a.querySelector('h2')?.innerText || '';
+                const href = a.href;
+                const datetime = a.querySelector('time')?.getAttribute('datetime') || '';
+                return { title, href, datetime };
+            })
+        );
+
+        console.log(`📄 Pagina ${clickCounter + 1}:`);
+        newLinks.forEach(link => {
+            console.log(`- ${link.datetime} | ${link.title}`);
+        });
+
+        const relevant = newLinks.filter(link => isArticleFromPreviousMonth(link.datetime));
+
+        if (relevant.length > 0) {
+            foundAnyFromPreviousMonth = true;
+            allLinks.push(...relevant);
+            console.log(`✅ ${relevant.length} artikelen van vorige maand toegevoegd`);
+        } else if (foundAnyFromPreviousMonth) {
+            console.log('🛑 Geen artikelen meer van vorige maand op deze pagina, stoppen...');
+            break;
+        }
+
         try {
             await page.click('button.button--more.more');
             await new Promise(resolve => setTimeout(resolve, 3000));
+            clickCounter++;
         } catch {
+            console.log('⛔️ Geen "meer laden" knop meer beschikbaar.');
             break;
         }
     }
 
-    const links = await page.$$eval('ul.articles li a', anchors =>
-        anchors.map(a => ({
-            href: a.href,
-            title: a.querySelector('h2')?.innerText || ''
-        }))
-    );
-
-    return links;
+    console.log(`📦 Totaal verzameld: ${allLinks.length} artikelen van vorige maand`);
+    return allLinks;
 }
+
 
 async function scrapeArticleDetail(page, article) {
     try {
         await page.goto(article.href, { waitUntil: 'networkidle2' });
         await page.waitForSelector('div.column.article h1', { timeout: 5000 });
 
-        const articleData = await page.evaluate(() => {
+        const result = await page.evaluate(() => {
             const container = document.querySelector('div.column.article');
             if (!container) return null;
             const title = Array.from(container.querySelectorAll('h1, h2')).map(el => el.innerText.trim()).filter(Boolean);
@@ -102,24 +138,30 @@ async function scrapeArticleDetail(page, article) {
             return { title, content };
         });
 
-        if (articleData) {
-            articleData.url = article.href;
-            return articleData;
-        }
+        if (!result) return null;
+
+        const fullText = [...result.title, ...result.content].join('\n');
+        if (!matchesKeywords(fullText)) return null;
+
+        return {
+            title: result.title.join(' – '),
+            content: result.content.join('\n\n'),
+            url: article.href
+        };
     } catch (err) {
-        console.warn(`⚠️  Fout bij ${article.href}: ${err.message}`);
+        console.warn(`⚠️ Fout bij ${article.href}: ${err.message}`);
+        return null;
     }
-    return null;
 }
 
 function exportToJson(data) {
-    const timestamp = getTimestampString();
+    const filename = getPreviousMonthFilename();
     const dir = path.join(__dirname, '../Transacties/LogistiekTransacties/JSON');
     fs.mkdirSync(dir, { recursive: true });
-    const filePath = path.join(dir, `logistiek_${timestamp}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-    console.log(`💾 JSON opgeslagen op ${filePath}`);
-    return filePath;
+    const fullPath = path.join(dir, filename);
+    fs.writeFileSync(fullPath, JSON.stringify(data, null, 2));
+    console.log(`💾 JSON opgeslagen op ${fullPath}`);
+    return fullPath;
 }
 
 async function scrapeLogistiek() {
@@ -131,21 +173,25 @@ async function scrapeLogistiek() {
     try {
         await loginToLogistiek(page);
         const links = await getArticleLinks(page);
+
         const data = [];
+        let overgeslagen = 0;
 
         for (let i = 0; i < links.length; i++) {
-            const article = links[i];
-            const matches = keywords.some(k => article.title.toLowerCase().includes(k.toLowerCase()));
-            if (!matches) continue;
-
-            const result = await scrapeArticleDetail(page, article);
+            const result = await scrapeArticleDetail(page, links[i]);
             if (result) {
                 data.push(result);
-                console.log(`(${i + 1}/${links.length}) ✅ Gescrapet: ${result.title[0]}`);
+                console.log(`✅ Gescrapet (${data.length}/${links.length}): ${result.title}`);
+            } else {
+                overgeslagen++;
+                console.log(`🚫 Overgeslagen (${i + 1}/${links.length}): ${links[i].title}`);
             }
         }
 
         exportToJson(data);
+        console.log(`\n✅ Gescrapet: ${data.length}`);
+        console.log(`🚫 Overgeslagen: ${overgeslagen}`);
+        console.log(`📦 Totaal van vorige maand: ${links.length}`);
     } catch (err) {
         console.error('❌ Fout tijdens scraping:', err.message);
     } finally {
@@ -154,6 +200,5 @@ async function scrapeLogistiek() {
 }
 
 module.exports = {
-    scrapeLogistiek,
-    getTimestampString
+    scrapeLogistiek
 };

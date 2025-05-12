@@ -37,15 +37,6 @@ async function loginToVastgoedjournaal(page) {
     }
 }
 
-// 📅 Bepaal vorige maand en jaar
-function getPreviousMonthAndYear() {
-    const now = new Date();
-    const vorigeMaand = now.getMonth(); // 0 = januari
-    const jaar = vorigeMaand === 0 ? now.getFullYear() - 1 : now.getFullYear();
-    const maand = vorigeMaand === 0 ? 12 : vorigeMaand;
-    return { maand, jaar };
-}
-
 function filterLinksByCurrentAndPreviousMonth(rawLinks) {
     const now = new Date();
     const huidigeMaand = now.getMonth() + 1;
