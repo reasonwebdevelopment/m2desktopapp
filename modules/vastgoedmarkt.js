@@ -12,10 +12,8 @@ const KEYWORDS = [
     'Purchase', 'purchase', 'Lease', 'lease', 'Leased', 'leased'
 ];
 
-//Wacht-hulpfunctie (vervanging voor page.waitForTimeout)
 const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Timestamp voor bestandsnamen
 function getTimestampString() {
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, '0');
@@ -26,45 +24,37 @@ function matchesKeywords(text) {
     return KEYWORDS.some(k => text.toLowerCase().includes(k.toLowerCase()));
 }
 
-// Login op Vastgoedmarkt
 async function loginToVastgoedmarkt(page) {
     const email = process.env.VGM_EMAIL;
     const wachtwoord = process.env.VGM_PASSWORD;
 
     await page.goto('https://www.vastgoedmarkt.nl/transacties', { waitUntil: 'networkidle2' });
 
-    // Cookie banner sluiten indien aanwezig
     try {
         await page.waitForSelector('#didomi-notice-agree-button', { timeout: 5000 });
         await page.click('#didomi-notice-agree-button');
     } catch { }
 
-    // Klik op login-knop
     await page.waitForSelector('.vmn-login', { visible: true });
     await page.click('.vmn-login');
 
-    // Vul e-mailadres in
     await page.waitForSelector('#enterEmail_email', { visible: true });
     await page.type('#enterEmail_email', email);
 
-    // Forceer frontend-validatie zodat knop activeert
     await page.evaluate(() => {
         const input = document.querySelector('#enterEmail_email');
         input.dispatchEvent(new Event('input', { bubbles: true }));
     });
 
-    // Wacht tot knop actief wordt en klik
     await page.waitForFunction(() => {
         const btn = document.querySelector('#enterEmail_next');
         return btn && !btn.disabled;
     }, { timeout: 5000 });
     await page.click('#enterEmail_next');
 
-    // Vul wachtwoord in
     await page.waitForSelector('#login-password_password', { visible: true });
     await page.type('#login-password_password', wachtwoord);
 
-    // Klik op inloggen
     await page.waitForFunction(() => {
         const btn = document.querySelector('#login-password_next');
         return btn && !btn.disabled;
@@ -72,7 +62,7 @@ async function loginToVastgoedmarkt(page) {
     await page.click('#login-password_next');
 
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
-    console.log('✅ Ingelogd op Vastgoedmarkt.nl');
+    console.log('Ingelogd op Vastgoedmarkt.nl');
 }
 
 function isArticleFromPreviousMonth(datetimeStr) {
@@ -85,8 +75,6 @@ function isArticleFromPreviousMonth(datetimeStr) {
     return pubDate.getMonth() === vorigeMaand && pubDate.getFullYear() === vorigJaar;
 }
 
-
-// Haalt relevante artikelen op basis van keywords
 async function getTransactionLinks(page) {
     const links = [];
     let foundAnyFromPreviousMonth = false;
@@ -104,7 +92,7 @@ async function getTransactionLinks(page) {
                 return { title, url, datetime };
             });
         });
-        console.log(`🕒 Artikelen gevonden op pagina ${pageCounter}:`);
+        console.log(`Artikelen gevonden op pagina ${pageCounter}:`);
         pageLinks.forEach(link => {
             console.log(`- ${link.datetime} | ${link.title}`);
         });
@@ -112,25 +100,24 @@ async function getTransactionLinks(page) {
         if (relevant.length > 0) {
             foundAnyFromPreviousMonth = true;
             links.push(...relevant);
-            console.log(`📄 Pagina ${pageCounter}: ${relevant.length} artikelen van vorige maand toegevoegd`);
+            console.log(`Pagina ${pageCounter}: ${relevant.length} artikelen van vorige maand toegevoegd`);
         } else if (foundAnyFromPreviousMonth) {
-            console.log(`🛑 Geen artikelen meer van vorige maand op pagina ${pageCounter}, stoppen...`);
+            console.log(`Geen artikelen meer van vorige maand op pagina ${pageCounter}, stoppen...`);
             break;
         }
         const nextButton = await page.$('.button.passive-arrow:last-child');
         if (!nextButton) {
-            console.log("⛔️ Geen 'volgende' knop meer gevonden, einde bereikt.");
+            console.log("Geen 'volgende' knop meer gevonden, einde bereikt.");
             break;
         }
         await nextButton.click();
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        await wait(3000);
         pageCounter++;
     }
-    console.log(`📦 Totaal verzameld: ${links.length} artikelen van vorige maand`);
+    console.log(`Totaal verzameld: ${links.length} artikelen van vorige maand`);
     return links;
 }
 
-// Scrape detaildata van elk artikel
 async function scrapeTransactionDetail(page, link) {
     try {
         await page.goto(link.url, { waitUntil: 'networkidle2' });
@@ -146,7 +133,7 @@ async function scrapeTransactionDetail(page, link) {
         });
         const combinedText = `${result.title}\n${result.content}`;
         if (!matchesKeywords(combinedText)) {
-            console.log(`🚫 Overgeslagen (geen keyword in titel of inhoud): ${link.title}`);
+            console.log(`Overgeslagen (geen keyword in titel of inhoud): ${link.title}`);
             return null;
         }
         return {
@@ -154,12 +141,11 @@ async function scrapeTransactionDetail(page, link) {
             url: link.url
         };
     } catch (err) {
-        console.warn(`⚠️  Fout bij ${link.url}: ${err.message}`);
+        console.warn(`Fout bij ${link.url}: ${err.message}`);
         return null;
     }
 }
 
-// JSON-export
 function exportToJson(data) {
     const timestamp = getTimestampString();
     const dir = path.join(__dirname, '../Transacties/VastgoedmarktTransacties/JSON');
@@ -170,7 +156,6 @@ function exportToJson(data) {
     return filePath;
 }
 
-// Main functie
 async function scrapeVastgoedmarkt() {
     const browser = await puppeteer.launch({ headless: false, slowMo: 50 });
     const page = await browser.newPage();
@@ -179,42 +164,27 @@ async function scrapeVastgoedmarkt() {
 
     try {
         await loginToVastgoedmarkt(page);
-        const allLinks = await getTransactionLinks(page); // Alleen artikelen van vorige maand
-        console.log(`📅 In totaal ${allLinks.length} artikelen van vorige maand gevonden`);
+        const allLinks = await getTransactionLinks(page);
+        console.log(`In totaal ${allLinks.length} artikelen van vorige maand gevonden`);
         const data = [];
         let overgeslagen = 0;
-        const messages = {
-            1: 'Verkochte objecten ophalen...',
-            2: 'Oppervlakte aan het berekenen...',
-            3: 'Bestemmingsplannen aan het wijzigen...',
-            4: 'OZB aan het berekenen...',
-            5: 'Koeien van het terrein aan het halen...',
-            6: 'Grote spelers aan het dwarsbomen...',
-            7: 'Deeltjes aan het versnellen...',
-            8: 'Atomen aan het splitten...',
-            11: 'Ammo aan het pakken...',
-            12: 'Aan het reloaden...',
-            13: 'Winner, winner, chicken dinner...',
-            14: 'Enemies met koekenpan aan het slaan...'
-        };
+
         for (let i = 0; i < allLinks.length; i++) {
-            const message = messages[i + 1];
-            if (message) console.log(message);
             const result = await scrapeTransactionDetail(page, allLinks[i]);
             if (result) {
                 data.push(result);
                 console.log(`(${data.length}/${allLinks.length}) Gescrapet: ${result.title}`);
             } else {
                 overgeslagen++;
-                console.log(`🚫 Overgeslagen (${i + 1}/${allLinks.length}): ${allLinks[i].title}`);
+                console.log(`Overgeslagen (${i + 1}/${allLinks.length}): ${allLinks[i].title}`);
             }
         }
         exportToJson(data);
-        console.log(`\n✅ Gescrapet: ${data.length} artikelen`);
-        console.log(`🚫 Overgeslagen (geen keyword): ${overgeslagen} artikelen`);
-        console.log(`📦 Totaal verwerkt (vorige maand): ${allLinks.length} artikelen`);
+        console.log(`Gescrapet: ${data.length} artikelen`);
+        console.log(`Overgeslagen (geen keyword): ${overgeslagen} artikelen`);
+        console.log(`Totaal verwerkt (vorige maand): ${allLinks.length} artikelen`);
     } catch (err) {
-        console.error('❌ Fout tijdens scraping:', err.message);
+        console.error('Fout tijdens scraping:', err.message);
     } finally {
         await browser.close();
     }

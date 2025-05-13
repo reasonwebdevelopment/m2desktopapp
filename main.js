@@ -1,7 +1,7 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('node:path');
 const Vastgoedmarkt = require('./modules/vastgoedmarkt');
-const logistiek = require('./modules/logistiek'); 
+const logistiek = require('./modules/logistiek');
 const Vastgoedjournaal = require('./modules/vastgoedjournaal');
 const fs = require('fs');
 
@@ -25,6 +25,7 @@ function createWindow() {
 
     // IPC handler for Vastgoedmarkt scraper
     ipcMain.handle('checkVastgoedmarkt', async () => {
+        console.log('[Main] checkVastgoedmarkt handler triggered!');
         return await Vastgoedmarkt.scrapeVastgoedmarkt(win);
     });
 
@@ -37,7 +38,7 @@ function createWindow() {
         console.log('[Main] checkLogistiek handler triggered!');
         return await logistiek.scrapeLogistiek();
     });
-    
+
     ipcMain.handle('checkVastgoedjournaal', async () => {
         console.log('[Main] checkVastgoedjournaal handler triggered!');
         return await Vastgoedjournaal.scrapeVastgoedjournaal();

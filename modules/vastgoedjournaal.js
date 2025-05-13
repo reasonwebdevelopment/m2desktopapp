@@ -3,14 +3,14 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-// 🕒 Genereer timestamp voor bestandsnaam
+// Genereer timestamp voor bestandsnaam
 function getTimestampString() {
     const now = new Date();
     const pad = (n) => n.toString().padStart(2, '0');
     return `${pad(now.getDate())}-${pad(now.getMonth() + 1)}-${now.getFullYear()}_${pad(now.getHours())}-${pad(now.getMinutes())}`;
 }
 
-// 🔐 Inloggen op vastgoedjournaal.nl
+// Inloggen op vastgoedjournaal.nl
 async function loginToVastgoedjournaal(page) {
     const email = process.env.VJ_EMAIL;
     const wachtwoord = process.env.VJ_PASSWORD;
@@ -28,12 +28,12 @@ async function loginToVastgoedjournaal(page) {
         ]);
 
         if (page.url().includes('/dashboard') || !page.url().includes('/login')) {
-            console.log('✅ Ingelogd');
+            console.log('Ingelogd');
         } else {
             throw new Error('Login lijkt niet gelukt (geen redirect naar dashboard)');
         }
     } catch (err) {
-        throw new Error('❌ Inloggen mislukt: ' + err.message);
+        throw new Error('Inloggen mislukt: ' + err.message);
     }
 }
 
@@ -65,43 +65,65 @@ function filterLinksByCurrentAndPreviousMonth(rawLinks) {
     });
 }
 
-// 🔗 Verzamel artikel-links van logistiekpagina
-async function getTransactionLinks(page, _category) {
+// Verzamel artikel-links van logistiekpagina
+async function getTransactionLinks(page) {
     await page.goto('https://vastgoedjournaal.nl/logistiek', { waitUntil: 'networkidle2' });
     await page.waitForSelector('#articles');
-    // 🔁 Klik tot 5 keer op de knop "Meer artikelen laden..."
-    for (let i = 0; i < 5; i++) {
-        const knopZichtbaar = await page.$('#news_load_more');
-        if (!knopZichtbaar) {
-            console.log(`🔁 Stoppen met klikken: knop niet meer zichtbaar na ${i} keer.`);
+
+    const rawLinks = [];
+    const seen = new Set();
+    let foundAnyFromPreviousMonth = false;
+    let loadCounter = 0;
+
+    while (true) {
+        const newLinks = await page.$$eval('#articles a', anchors =>
+            anchors
+                .filter(a => a.querySelector('article'))
+                .map(a => {
+                    const url = a.href;
+                    const dateText = a.querySelector('p.time')?.innerText?.trim() || '';
+                    const title = a.querySelector('h2')?.innerText?.trim() || 'Geen titel';
+                    return { url, dateText, title };
+                })
+        );
+
+        const unseenLinks = newLinks.filter(link => link.url && !seen.has(link.url));
+        unseenLinks.forEach(link => seen.add(link.url));
+        rawLinks.push(...unseenLinks);
+
+        const relevantLinks = filterLinksByCurrentAndPreviousMonth(unseenLinks);
+
+        console.log(`Artikelen gevonden op pagina ${loadCounter + 1}:`);
+        unseenLinks.forEach(link => {
+            console.log(`- ${link.dateText} | ${link.title}`);
+        });
+
+        console.log(`Pagina ${loadCounter + 1}: ${relevantLinks.length} artikelen van vorige maand toegevoegd`);
+
+        if (relevantLinks.length > 0) {
+            foundAnyFromPreviousMonth = true;
+        } else if (foundAnyFromPreviousMonth) {
+            console.log('Geen relevante artikelen meer van vorige maand, stoppen...');
             break;
         }
-        console.log(`🔘 Klik ${i + 1}/5 op 'Meer artikelen laden...'`);
-        await page.evaluate(() => {
-            document.querySelector('#news_load_more').click();
-        });
-        // wacht 1.5 sec
+
+        const knop = await page.$('#news_load_more');
+        if (!knop) {
+            console.log('Geen "meer artikelen laden..." knop meer zichtbaar.');
+            break;
+        }
+
+        console.log(`Klik ${++loadCounter}x op 'Meer artikelen laden...'`);
+        await page.evaluate(() => document.querySelector('#news_load_more').click());
         await new Promise(resolve => setTimeout(resolve, 1500));
     }
 
-    // 📄 Verzamel alle links na het laden
-    const rawLinks = await page.$$eval('#articles a', anchors =>
-        anchors
-            .filter(a => a.querySelector('article'))
-            .map(a => {
-                const dateText = a.querySelector('p.time')?.innerText?.trim() || '';
-                return {
-                    url: a.href,
-                    dateText
-                };
-            })
-    );
-    // 📅 Filter op vorige én huidige maand
     const filtered = filterLinksByCurrentAndPreviousMonth(rawLinks);
+    console.log(`Totaal relevante artikelen: ${filtered.length}`);
     return filtered.map(link => ({ url: link.url }));
 }
 
-// 📰 Scrape artikelpagina (titel + inhoud)
+// Scrape artikelpagina (titel + inhoud)
 async function scrapeTransactionDetail(page, url) {
     try {
         await page.goto(url, { waitUntil: 'networkidle2' });
@@ -122,12 +144,12 @@ async function scrapeTransactionDetail(page, url) {
             url: url
         };
     } catch (err) {
-        console.warn(`❌ Fout bij ${url}: ${err.message}`);
+        console.warn(`Fout bij ${url}: ${err.message}`);
         return null;
     }
 }
 
-// 💾 Sla resultaat op als JSON
+// Sla resultaat op als JSON
 function getJson(data) {
     const timestamp = getTimestampString();
     const exportDir = path.join(__dirname, '../Transacties/VastgoedjournaalTransacties/JSON');
@@ -135,11 +157,11 @@ function getJson(data) {
 
     const jsonPath = path.join(exportDir, `vastgoedjournaal_${timestamp}.json`);
     fs.writeFileSync(jsonPath, JSON.stringify(data, null, 2));
-    console.log(`✅ JSON opgeslagen op: ${jsonPath}`);
+    console.log(`JSON opgeslagen op: ${jsonPath}`);
     return jsonPath;
 }
 
-// 🚀 Hoofdproces
+// Hoofdproces
 async function scrapeVastgoedjournaal() {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
@@ -164,13 +186,12 @@ async function scrapeVastgoedjournaal() {
 
         getJson(allData);
     } catch (err) {
-        console.error('❌ Fout tijdens scraping:', err.message);
+        console.error('Fout tijdens scraping:', err.message);
     } finally {
         await browser.close();
     }
 }
 
-// 📦 Exporteerbare functies
 module.exports = {
     scrapeVastgoedjournaal,
     getJson,
