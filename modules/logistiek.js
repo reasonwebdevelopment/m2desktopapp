@@ -80,49 +80,65 @@ async function loginToLogistiek(page) {
 async function getArticleLinks(page) {
     await page.goto('https://www.logistiek.nl/nieuws', { waitUntil: 'networkidle2' });
 
-    let allLinks = [];
-    let clickCounter = 0;
+    const links = [];
+    const seen = new Set();
     let foundAnyFromPreviousMonth = false;
+    let pageCounter = 1;
 
     while (true) {
-        const newLinks = await page.$$eval('ul.articles li a', nodes =>
-            nodes.map(a => {
-                const title = a.querySelector('h2')?.innerText || '';
-                const href = a.href;
-                const datetime = a.querySelector('time')?.getAttribute('datetime') || '';
-                return { title, href, datetime };
-            })
-        );
+        await page.waitForSelector('.group-wrapper .group');
 
-        console.log(`📄 Pagina ${clickCounter + 1}:`);
-        newLinks.forEach(link => {
+        const newLinks = await page.$$eval('.group', groups => {
+            return groups.flatMap(group => {
+                const articles = Array.from(group.querySelectorAll('ul.articles li a'));
+                return articles.map(a => {
+                    const title = a.querySelector('h2')?.innerText || '';
+                    const href = a.href;
+                    const datetime = a.querySelector('time')?.getAttribute('datetime') || '';
+                    return { title, href, datetime };
+                });
+            });
+        });
+
+        // Filter unieke en relevante artikelen
+        const filtered = newLinks.filter(link => {
+            return link.href && !seen.has(link.href) && link.datetime && link.datetime.length > 0;
+        });
+
+        filtered.forEach(link => seen.add(link.href));
+
+        console.log(`🕒 Artikelen gevonden op pagina ${pageCounter}:`);
+        filtered.forEach(link => {
             console.log(`- ${link.datetime} | ${link.title}`);
         });
 
-        const relevant = newLinks.filter(link => isArticleFromPreviousMonth(link.datetime));
+        const relevant = filtered.filter(link => isArticleFromPreviousMonth(link.datetime));
 
         if (relevant.length > 0) {
             foundAnyFromPreviousMonth = true;
-            allLinks.push(...relevant);
-            console.log(`✅ ${relevant.length} artikelen van vorige maand toegevoegd`);
+            links.push(...relevant);
+            console.log(`📄 Pagina ${pageCounter}: ${relevant.length} artikelen van vorige maand toegevoegd`);
         } else if (foundAnyFromPreviousMonth) {
-            console.log('🛑 Geen artikelen meer van vorige maand op deze pagina, stoppen...');
+            console.log(`🛑 Geen nieuwe artikelen van vorige maand op pagina ${pageCounter}, stoppen...`);
             break;
         }
 
-        try {
-            await page.click('button.button--more.more');
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            clickCounter++;
-        } catch {
-            console.log('⛔️ Geen "meer laden" knop meer beschikbaar.');
+        // Klik op "meer laden" indien beschikbaar
+        const loadMoreButton = await page.$('button.button--more.more');
+        if (!loadMoreButton) {
+            console.log("⛔️ Geen 'meer laden' knop meer beschikbaar.");
             break;
         }
+
+        await loadMoreButton.click();
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        pageCounter++;
     }
 
-    console.log(`📦 Totaal verzameld: ${allLinks.length} artikelen van vorige maand`);
-    return allLinks;
+    console.log(`📦 Totaal verzameld: ${links.length} artikelen van vorige maand`);
+    return links;
 }
+
 
 
 async function scrapeArticleDetail(page, article) {
@@ -141,8 +157,10 @@ async function scrapeArticleDetail(page, article) {
         if (!result) return null;
 
         const fullText = [...result.title, ...result.content].join('\n');
-        if (!matchesKeywords(fullText)) return null;
-
+        if (!matchesKeywords(fullText)) {
+            console.log(`🚫 Overgeslagen (geen keyword in titel of inhoud): ${link.title}`);
+            return null;
+        }
         return {
             title: result.title.join(' – '),
             content: result.content.join('\n\n'),

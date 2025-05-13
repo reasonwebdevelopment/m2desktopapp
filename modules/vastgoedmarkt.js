@@ -38,32 +38,39 @@ async function loginToVastgoedmarkt(page) {
         await page.waitForSelector('#didomi-notice-agree-button', { timeout: 5000 });
         await page.click('#didomi-notice-agree-button');
     } catch { }
+
     // Klik op login-knop
     await page.waitForSelector('.vmn-login', { visible: true });
     await page.click('.vmn-login');
+
     // Vul e-mailadres in
     await page.waitForSelector('#enterEmail_email', { visible: true });
     await page.type('#enterEmail_email', email);
+
     // Forceer frontend-validatie zodat knop activeert
     await page.evaluate(() => {
         const input = document.querySelector('#enterEmail_email');
         input.dispatchEvent(new Event('input', { bubbles: true }));
     });
+
     // Wacht tot knop actief wordt en klik
     await page.waitForFunction(() => {
         const btn = document.querySelector('#enterEmail_next');
         return btn && !btn.disabled;
     }, { timeout: 5000 });
     await page.click('#enterEmail_next');
+
     // Vul wachtwoord in
     await page.waitForSelector('#login-password_password', { visible: true });
     await page.type('#login-password_password', wachtwoord);
+
     // Klik op inloggen
     await page.waitForFunction(() => {
         const btn = document.querySelector('#login-password_next');
         return btn && !btn.disabled;
     }, { timeout: 5000 });
     await page.click('#login-password_next');
+
     await page.waitForNavigation({ waitUntil: 'networkidle2' });
     console.log('✅ Ingelogd op Vastgoedmarkt.nl');
 }
@@ -71,68 +78,64 @@ async function loginToVastgoedmarkt(page) {
 function isArticleFromPreviousMonth(datetimeStr) {
     const pubDate = new Date(datetimeStr);
     const now = new Date();
+
     const vorigeMaand = now.getMonth() === 0 ? 11 : now.getMonth() - 1;
     const vorigJaar = now.getMonth() === 0 ? now.getFullYear() - 1 : now.getFullYear();
+
     return pubDate.getMonth() === vorigeMaand && pubDate.getFullYear() === vorigJaar;
 }
 
 
 // Haalt relevante artikelen op basis van keywords
 async function getTransactionLinks(page) {
-    await page.goto('https://www.logistiek.nl/nieuws', { waitUntil: 'networkidle2' });
-
-    let allLinks = [];
-    let clickCounter = 0;
+    const links = [];
     let foundAnyFromPreviousMonth = false;
-
+    await page.waitForSelector('section[type="articles_summaries"]:first-child');
+    await page.click('section[type="articles_summaries"]:first-child .head a');
+    await page.waitForSelector('.button.passive-arrow');
+    let pageCounter = 1;
     while (true) {
-        const newLinks = await page.$$eval('ul.articles li a', nodes =>
-            nodes.map(a => {
-                const title = a.querySelector('h2')?.innerText || '';
-                const href = a.href;
-                const datetime = a.querySelector('time')?.getAttribute('datetime') || '';
-                return { title, href, datetime };
-            })
-        );
-
-        console.log(`📄 Pagina ${clickCounter + 1}:`);
-        newLinks.forEach(link => {
+        const pageLinks = await page.$$eval('.summary', nodes => {
+            return nodes.map(node => {
+                const title = node.querySelector(".title h2")?.innerText || '';
+                const url = node.href;
+                const timeEl = node.querySelector('time');
+                const datetime = timeEl?.getAttribute('datetime') || '';
+                return { title, url, datetime };
+            });
+        });
+        console.log(`🕒 Artikelen gevonden op pagina ${pageCounter}:`);
+        pageLinks.forEach(link => {
             console.log(`- ${link.datetime} | ${link.title}`);
         });
-
-        const relevant = newLinks.filter(link => isArticleFromPreviousMonth(link.datetime));
-
+        const relevant = pageLinks.filter(link => isArticleFromPreviousMonth(link.datetime));
         if (relevant.length > 0) {
             foundAnyFromPreviousMonth = true;
-            allLinks.push(...relevant);
-            console.log(`✅ ${relevant.length} artikelen van vorige maand toegevoegd`);
+            links.push(...relevant);
+            console.log(`📄 Pagina ${pageCounter}: ${relevant.length} artikelen van vorige maand toegevoegd`);
         } else if (foundAnyFromPreviousMonth) {
-            console.log('🛑 Geen artikelen meer van vorige maand op deze pagina, stoppen...');
+            console.log(`🛑 Geen artikelen meer van vorige maand op pagina ${pageCounter}, stoppen...`);
             break;
         }
-
-        try {
-            await page.click('button.button--more.more');
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            clickCounter++;
-        } catch {
-            console.log('⛔️ Geen "meer laden" knop meer beschikbaar.');
+        const nextButton = await page.$('.button.passive-arrow:last-child');
+        if (!nextButton) {
+            console.log("⛔️ Geen 'volgende' knop meer gevonden, einde bereikt.");
             break;
         }
+        await nextButton.click();
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        pageCounter++;
     }
-
-    console.log(`📦 Totaal verzameld: ${allLinks.length} artikelen van vorige maand`);
-    return allLinks;
+    console.log(`📦 Totaal verzameld: ${links.length} artikelen van vorige maand`);
+    return links;
 }
-
-
-
 
 // Scrape detaildata van elk artikel
 async function scrapeTransactionDetail(page, link) {
     try {
         await page.goto(link.url, { waitUntil: 'networkidle2' });
         await page.waitForSelector('.types-article-content', { timeout: 5000 });
+
         const result = await page.evaluate(() => {
             const titleEl = document.querySelector('p[type="article_intro"]');
             const contentEl = document.querySelector('.types-article-content');
