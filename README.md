@@ -39,14 +39,47 @@ Zorg ervoor dat **Node.js** (LTS-versie aanbevolen) en **npm** geïnstalleerd zi
    ```bash
    git clone https://github.com/reasonwebdevelopment/m2desktopapp.git
    cd m2desktopapp
+---
 
 ## 📦 Afhankelijkheden installeren
 
 ```bash
 npm install
 
+---
+
 ## ▶️ Applicatie starten
 
 ```bash
 npm start
 
+---
+
+## 🧪 Technologieën
+
+| Technologie      | Toepassing                                      |
+|------------------|--------------------------------------------------|
+| Electron         | Desktopomgeving met Node.js + Chromium           |
+| Node.js          | Back-end logica en scraping                      |
+| HTML5 + CSS3     | Structuur en styling van de UI                   |
+| Tailwind CSS     | Utility-first CSS styling                        |
+| JavaScript       | Applicatielogica (front-end & back-end)          |
+| Puppeteer        | Webscraping met headless Chromium                |
+| ExcelJS          | Genereren en opslaan van Excel-bestanden         |
+| Webpack & Babel  | Bundeling en transpiling tijdens development     |
+
+---
+
+## ⚠️ Site-structuur wijzigingen
+
+Als een van de websites haar HTML wijzigt, moet je mogelijk de selectors aanpassen in:
+
+- `modules/logistiek.js`  
+- `modules/vastgoedmarkt.js`  
+- `modules/vastgoedjournaal.js`  
+
+---
+
+## ✅ Klaar voor gebruik
+
+Na installatie en eventuele configuratie kun je met één druk op de knop actuele vastgoedtransacties ophalen, analyseren en exporteren naar Excel.
