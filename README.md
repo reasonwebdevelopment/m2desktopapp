@@ -4,7 +4,7 @@
 
 ---
 
-## 📚 Ondersteunde gegevensbronnen
+## 📚 Gemaakte scrapers
 
 - **Vastgoedmarkt.nl** – vastgoednieuws en transacties (verkoop/verhuur van panden)  
 - **Vastgoedjournaal** – platform met vastgoedtransacties en -nieuws  
