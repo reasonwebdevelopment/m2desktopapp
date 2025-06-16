@@ -82,4 +82,4 @@ Als een van de websites haar HTML wijzigt, moet je mogelijk de selectors aanpass
 
 ## ✅ Klaar voor gebruik
 
-Na installatie en eventuele configuratie kun je met één druk op de knop actuele vastgoedtransacties ophalen, analyseren en exporteren naar Excel.
+Na installatie en eventuele configuratie kun je met één druk op de knop actuele vastgoedtransacties ophalen en analyseren met de GPT. 
